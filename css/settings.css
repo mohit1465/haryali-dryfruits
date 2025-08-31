@@ -1,0 +1,220 @@
+/* Settings Page Styles */
+.settings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.settings-header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.settings-header h1 {
+    color: #2e7d32;
+    margin-bottom: 0.5rem;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.settings-card {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.settings-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.settings-card .settings-header {
+    background-color: #f5f5f5;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.settings-card .settings-header i {
+    font-size: 1.5rem;
+    color: #2e7d32;
+}
+
+.settings-card .settings-header h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #333;
+}
+
+.settings-content {
+    padding: 1.5rem;
+}
+
+.settings-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.settings-group:last-child {
+    border-bottom: none;
+}
+
+.settings-group label {
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+}
+
+.settings-value-container {
+    flex: 2;
+    position: relative;
+    margin: 0 1rem;
+}
+
+.settings-value {
+    color: #666;
+    word-break: break-word;
+}
+
+.settings-edit-input {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.btn-edit, .btn-save {
+    background-color: #2e7d32;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.2s;
+}
+
+.btn-edit:hover, .btn-save:hover {
+    background-color: #1b5e20;
+}
+
+.btn-save {
+    display: none;
+    margin-top: 1rem;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+    margin-left: 1rem;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #2e7d32;
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px #2e7d32;
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Login Prompt */
+.settings-login-prompt {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    text-align: center;
+    padding: 2rem;
+}
+
+.login-prompt-content {
+    max-width: 400px;
+    padding: 2rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.login-prompt-content i {
+    font-size: 3rem;
+    color: #2e7d32;
+    margin-bottom: 1rem;
+}
+
+.login-prompt-content h2 {
+    margin: 1rem 0;
+    color: #333;
+}
+
+.login-prompt-content p {
+    color: #666;
+    margin-bottom: 1.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .settings-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+    
+    .settings-value-container {
+        margin: 0.5rem 0;
+        width: 100%;
+    }
+    
+    .btn-edit {
+        align-self: flex-end;
+    }
+}
