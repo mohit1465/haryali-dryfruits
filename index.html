@@ -3,42 +3,1185 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Random Background Color</title>
-    <style> 
-        body {
-            margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: sans-serif;
-            transition: background-color 0.5s ease;
-        }
-        #colorCode {
-            font-size: 2em;
-            color: white;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-        }
-    </style>
+    <title>Haryali DryFruits</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="css/settings.css">
+    <link rel="stylesheet" href="css/cart.css">
 </head>
 <body>
-    <div id="colorCode"></div>
+    <header>
+        <div class="header-content">
+            <div class="header-top">
+                <h1 class="logo">Haryali DryFruits</h1>
+                <div class="header-actions">
+                    <button id="login-button" class="login-button">
+                        <i class="fas fa-user"></i> Login
+                    </button>
+                    <div class="cart-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="cart-count">0</span>
+                    </div>
+                    <div class="menu-icon">
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dot"></div>
+                        <div class="dropdown-menu">
+                            <a href="#" class="dropdown-item"><i class="fas fa-home"></i> Home</a>
+                            <a href="#" class="dropdown-item"><i class="fas fa-user"></i> Profile</a>
+                            <a href="#" class="dropdown-item"><i class="fas fa-box"></i> My Orders</a>
+                            <a href="#" class="dropdown-item"><i class="fas fa-heart"></i> Wishlist</a>
+                            <a href="#" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a>
+                            <a href="#" class="dropdown-item"><i class="fas fa-info-circle"></i> About</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="header-text">
+                <p class="tagline">Pure. Premium. Handpicked for You.</p>
+                <p class="subtext">Experience the finest selection of dry fruits and herbs, sourced directly from nature's bounty.</p>
+            </div>
+            <button class="shop-button">Shop Now</button>
+        </div>
+    </header>
+
+    <main id="home" class="">
+        <!-- Featured Products -->
+        <section class="featured-products">
+            <div class="container">
+                <div class="featured-title">
+                    <span>Today's Special</span>
+                    <h2>Featured Products</h2>
+                </div>
+                <div class="featured-grid">
+                    <div class="featured-card" style="background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1600334129128-685c5582fd35?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;">
+                        <div class="featured-content">
+                            <h3>मामरा देसी कश्मीरी गिरी</h3>
+                            <p class="price">Rs. 1120/Kg</p>
+                            <button class="featured-btn">Shop Now</button>
+                        </div>
+                    </div>
+                    <div class="featured-card" style="background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), url('https://images.unsplash.com/photo-1601493700631-2b16ec4b4716?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') center/cover;">
+                        <div class="featured-content">
+                            <h3>केसर (Saffron)</h3>
+                            <p class="price">Rs. 520/g</p>
+                            <button class="featured-btn">Shop Now</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Products Section -->
+        <section id="products" class="section">
+            <h2>Our Premium Products</h2>
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search products...">
+                <i class="fas fa-search"></i>
+            </div>
+            <div class="products-grid">
+                <!-- Product 1 -->
+                <div class="product-card" data-product-id="almonds">
+                    <div class="product-card__image-container">
+                        <img src="assets/product home page/1.png" alt="Almonds" class="product-card__image">
+                        <span class="product-card__category">Premium</span>
+                        <button class="product-card__wishlist">
+                            <img src="assets/product home page/love.svg" alt="Add to wishlist" class="love">
+                        </button>
+                    </div>
+                    <div class="product-card__content">
+                        <h3>बादाम (California Almonds)</h3>
+                        <div class="product-card__price-container">
+                            <span class="product-card__price">₹650/kg</span>
+                            <span class="product-card__original-price">₹999/kg</span>
+                        </div>
+                        <button class="product-card__add-to-cart">Add To Cart</button>
+                    </div>
+                </div>
+
+                <!-- Product 2 -->
+                <div class="product-card" data-product-id="mamra-kashmiri">
+                    <div class="product-card__image-container">
+                        <img src="assets/product home page/2.png" alt="Mamra Desi Kashmiri Kernels" class="product-card__image">
+                        <span class="product-card__category">Premium</span>
+                        <button class="product-card__wishlist">
+                            <img src="assets/product home page/love.svg" alt="Add to wishlist" class="love">
+                        </button>
+                    </div>
+                    <div class="product-card__content">
+                        <h3>मामरा देसी कश्मीरी गिरी (Mamra Desi Kashmiri Kernels)</h3>
+                        <div class="product-card__price-container">
+                            <span class="product-card__price">₹1,120/kg</span>
+                            <span class="product-card__original-price">₹1,350/kg</span>
+                        </div>
+                        <button class="product-card__add-to-cart">Add To Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-card__image-container">
+                        <img src="assets/product home page/3.png" alt="Walnuts" class="product-card__image">
+                        <span class="product-card__category">Premium</span>
+                        <button class="product-card__wishlist">
+                            <img src="assets/product home page/love.svg" alt="Add to wishlist" class="love">
+                        </button>
+                    </div>
+                    <div class="product-card__content">
+                        <h3>अखरोट (Kashmiri Walnut Giri)</h3>
+                        <div class="product-card__price-container">
+                            <span class="product-card__price">₹420/kg</span>
+                            <span class="product-card__original-price">₹520/kg</span>
+                        </div>
+                        <button class="product-card__add-to-cart">Add To Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-card__image-container">
+                        <img src="assets/product home page/4.png" alt="Walnuts Premium" class="product-card__image">
+                        <span class="product-card__category">Premium+</span>
+                        <button class="product-card__wishlist">
+                            <img src="assets/product home page/love.svg" alt="Add to wishlist" class="love">
+                        </button>
+                    </div>
+                    <div class="product-card__content">
+                        <h3>अखरोट प्रीमियम (Kashmiri Walnut Premium)</h3>
+                        <div class="product-card__price-container">
+                            <span class="product-card__price">₹560/kg</span>
+                            <span class="product-card__original-price">₹690/kg</span>
+                        </div>
+                        <button class="product-card__add-to-cart">Add To Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-card__image-container">
+                        <img src="assets/product home page/5.png" alt="Saffron" class="product-card__image">
+                        <span class="product-card__category">Luxury</span>
+                        <button class="product-card__wishlist">
+                            <img src="assets/product home page/love.svg" alt="Add to wishlist" class="love">
+                        </button>
+                    </div>
+                    <div class="product-card__content">
+                        <h3>केसर (Kashmiri Saffron - Mogra)</h3>
+                        <div class="product-card__price-container">
+                            <span class="product-card__price">₹520/g</span>
+                            <span class="product-card__original-price">₹650/g</span>
+                        </div>
+                        <button class="product-card__add-to-cart">Add To Cart</button>
+                    </div>
+                </div>
+
+                <div class="product-card">
+                    <div class="product-card__image-container">
+                        <img src="assets/product home page/6.png" alt="Shilajit" class="product-card__image">
+                        <span class="product-card__category">Ayurvedic</span>
+                        <button class="product-card__wishlist">
+                            <img src="assets/product home page/love.svg" alt="Add to wishlist" class="love">
+                        </button>
+                    </div>
+                    <div class="product-card__content">
+                        <h3>शिलाजीत (Himalayan Shilajit Resin)</h3>
+                        <div class="product-card__price-container">
+                            <span class="product-card__price">₹1,180/20g</span>
+                            <span class="product-card__original-price">₹1,499/20g</span>
+                        </div>
+                        <button class="product-card__add-to-cart">Add To Cart</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="section">
+            <h2>What Our Customers Say</h2>
+            <div class="testimonials-container">
+                <div class="testimonial">
+                    <p>"Best quality dry fruits in town! Fresh and delicious."</p>
+                    <span>- Rajesh K.</span>
+                </div>
+                <div class="testimonial">
+                    <p>"Authentic taste and premium quality. Highly recommended!"</p>
+                    <span>- Priya M.</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Promise Section -->
+        <section id="promise" class="section">
+            <h2>Our Promise</h2>
+            <div class="promise-content">
+                <div class="promise-item">
+                    <i class="fas fa-medal"></i>
+                    <h3>Premium Quality</h3>
+                    <p>Only the finest selection of dry fruits and herbs</p>
+                </div>
+                <div class="promise-item">
+                    <i class="fas fa-leaf"></i>
+                    <h3>100% Natural</h3>
+                    <p>No additives or preservatives</p>
+                </div>
+                <div class="promise-item">
+                    <i class="fas fa-truck"></i>
+                    <h3>Fast Delivery</h3>
+                    <p>Quick and reliable shipping</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <main id="cart" class="hidden">
+        <div class="cart-container">
+            <section id="cart-header" class="section-header">
+                <h2 class="active" data-tab="shopping-cart">Shopping Cart</h2>
+                <h2 data-tab="wishlist">Wishlist</h2>
+            </section>
+            
+            <section id="shopping-cart" class="cart-content active">
+                <div class="cart-items">
+                    <!-- Cart items will be dynamically added here -->
+                    <div class="empty-cart">
+                        <i class="fas fa-shopping-cart"></i>
+                        <h3>Your cart is empty</h3>
+                        <p>Looks like you haven't added anything to your cart yet</p>
+                        <button class="btn-primary" onclick="showSection('home')">Continue Shopping</button>
+                    </div>
+                </div>
+                <div class="cart-summary">
+                    <h3>Order Summary</h3>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span class="subtotal-amount">₹0.00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Shipping</span>
+                        <span class="shipping">Calculated at checkout</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Total</span>
+                        <span class="total-amount">₹0.00</span>
+                    </div>
+                    <button class="btn-checkout" disabled>Proceed to Checkout</button>
+                    <div class="payment-methods">
+                        <span>We accept:</span>
+                        <div class="payment-icons">
+                            <i class="fab fa-cc-visa"></i>
+                            <i class="fab fa-cc-mastercard"></i>
+                            <i class="fab fa-cc-paypal"></i>
+                            <i class="fas fa-university"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section id="wishlist" class="cart-content">
+                <div class="wishlist-items">
+                    <!-- Wishlist items will be dynamically added here -->
+                    <div class="empty-wishlist">
+                        <i class="far fa-heart"></i>
+                        <h3>Your wishlist is empty</h3>
+                        <p>Save items you love to buy them later</p>
+                        <button class="btn-primary" onclick="showSection('home')">Continue Shopping</button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <main id="profile" class="hidden">
+        <div class="profile-container">
+            <!-- Logged Out State -->
+            <div id="profile-logged-out" class="profile-login-prompt" style="display: none;">
+                <div class="login-prompt-content">
+                    <i class="fas fa-user-lock"></i>
+                    <h2>Please Sign In</h2>
+                    <p>Sign in to view and manage your profile information</p>
+                    <button id="profile-login-btn" class="btn btn-primary">
+                        <i class="fab fa-google"></i> Sign in with Google
+                    </button>
+                </div>
+            </div>
+
+            <!-- Logged In State -->
+            <div id="profile-logged-in" class="profile-content" style="display: none;">
+                <div class="profile-main">
+                    <!-- Personal Information Tab -->
+                    <div class="profile-tab active" id="personal-info">
+                        <div class="section-header">
+                            <h2>Personal Information</h2>
+                            <p class="section-subtitle">Your account details and information</p>
+                        </div>
+                        
+                        <div class="profile-card">
+                            <div class="profile-avatar">
+                                <img id="profile-avatar" src="" alt="Profile Picture">
+                            </div>
+                            
+                            <div class="profile-info">
+                                <div class="info-row">
+                                    <span class="info-label">Full Name</span>
+                                    <span id="profile-name" class="info-value"></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Email</span>
+                                    <span id="profile-email" class="info-value"></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Account Created</span>
+                                    <span id="profile-created" class="info-value"></span>
+                                </div>
+                                <div class="info-row">
+                                    <span class="info-label">Last Login</span>
+                                    <span id="profile-last-login" class="info-value"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="profile-actions">
+                                <button id="profile-logout-btn" class="btn btn-outline">
+                                    <i class="fas fa-sign-out-alt"></i> Sign Out
+                                </button>
+                            </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Addresses Tab -->
+                    <div class="profile-tab" id="addresses">
+                        <div class="section-header">
+                            <div>
+                                <h2>My Addresses</h2>
+                                <p class="section-subtitle">Manage your delivery addresses</p>
+                            </div>
+                            <button class="btn btn-primary" id="addAddressBtn">
+                                <i class="fas fa-plus"></i> Add New Address
+                            </button>
+                        </div>
+                        
+                        <div class="addresses-grid">
+                            <!-- Address cards will be dynamically added here -->
+                            <div class="empty-state">
+                                <div class="empty-state-icon">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                </div>
+                                <h4>No saved addresses</h4>
+                                <p>You haven't added any delivery addresses yet.</p>
+                                <button class="btn btn-primary" id="addFirstAddress">
+                                    <i class="fas fa-plus"></i> Add Your First Address
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="orders" class="hidden">
+        <div class="orders-container">
+            <div class="orders-header">
+                <h1>My Orders</h1>
+                <div class="order-filters">
+                    <button class="filter-btn active" data-filter="all">All Orders</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="shipped">Shipped</button>
+                    <button class="filter-btn" data-filter="delivered">Delivered</button>
+                    <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+                </div>
+            </div>
+            
+            <div class="order-list">
+                <!-- Order items will be dynamically added here -->
+                <div class="empty-orders">
+                    <i class="fas fa-box-open"></i>
+                    <h3>No orders yet</h3>
+                    <p>You haven't placed any orders with us yet.</p>
+                    <button class="btn-primary" onclick="showSection('home')">Start Shopping</button>
+                </div>
+                
+                <!-- Sample Order Item (hidden by default) -->
+                <div class="order-item" data-status="delivered" style="display: none;">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <span class="order-id">Order #12345</span>
+                            <span class="order-date">Placed on 15 Aug 2023</span>
+                        </div>
+                        <div class="order-status delivered">
+                            <i class="fas fa-check-circle"></i> Delivered on 18 Aug 2023
+                        </div>
+                    </div>
+                    
+                    <div class="order-products">
+                        <div class="order-product">
+                            <img src="assets/product home page/1.png" alt="Almonds" class="product-image">
+                            <div class="product-details">
+                                <h4>Premium Almonds</h4>
+                                <p>500g</p>
+                                <div class="product-price">₹499</div>
+                            </div>
+                            <div class="product-quantity">Qty: 1</div>
+                        </div>
+                        
+                        <div class="order-product">
+                            <img src="assets/product home page/2.png" alt="Cashews" class="product-image">
+                            <div class="product-details">
+                                <h4>Premium Cashews</h4>
+                                <p>500g</p>
+                                <div class="product-price">₹599</div>
+                            </div>
+                            <div class="product-quantity">Qty: 2</div>
+                        </div>
+                    </div>
+                    
+                    <div class="order-footer">
+                        <div class="order-total">
+                            <span>Total:</span>
+                            <span class="total-amount">₹1,697</span>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn-outline"><i class="fas fa-redo"></i> Reorder</button>
+                            <button class="btn-outline"><i class="far fa-file-invoice"></i> Invoice</button>
+                            <button class="btn-outline"><i class="fas fa-headset"></i> Help</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="track-order" style="display: none;">
+                <h2>Track Your Order</h2>
+                <div class="tracking-steps">
+                    <div class="tracking-step active">
+                        <div class="step-icon"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="step-details">
+                            <h4>Order Placed</h4>
+                            <p>15 Aug 2023, 10:30 AM</p>
+                        </div>
+                    </div>
+                    <div class="tracking-step active">
+                        <div class="step-icon"><i class="fas fa-box"></i></div>
+                        <div class="step-details">
+                            <h4>Packed</h4>
+                            <p>15 Aug 2023, 2:15 PM</p>
+                        </div>
+                    </div>
+                    <div class="tracking-step active">
+                        <div class="step-icon"><i class="fas fa-truck"></i></div>
+                        <div class="step-details">
+                            <h4>Shipped</h4>
+                            <p>16 Aug 2023, 11:00 AM</p>
+                            <p class="tracking-id">Tracking ID: DEL1234567890</p>
+                        </div>
+                    </div>
+                    <div class="tracking-step">
+                        <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                        <div class="step-details">
+                            <h4>Delivered</h4>
+                            <p>Expected by 18 Aug 2023</p>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-primary back-to-orders"><i class="fas fa-arrow-left"></i> Back to Orders</button>
+            </div>
+        </div>
+    </main>
+
+    <main id="settings" class="hidden">
+        <!-- Logged Out State -->
+        <div id="settings-logged-out" class="settings-login-prompt" style="display: none;">
+            <div class="login-prompt-content">
+                <i class="fas fa-user-lock"></i>
+                <h2>Welcome to Your Account</h2>
+                <p>Sign in to access your personalized settings, track orders, and manage your preferences</p>
+                <button id="settings-login-btn" class="btn btn-primary" style="margin-top: 20px;">
+                    <i class="fab fa-google"></i> Sign in with Google
+                </button>
+                <div class="signup-suggestion" style="margin-top: 20px; font-size: 0.9rem;">
+                    Don't have an account? <a href="#" id="show-signup" style="color: #2e7d32; font-weight: 500;">Sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logged In State -->
+        <div id="settings-logged-in" class="settings-container" style="display: none;">
+            <div class="settings-header">
+                <h1>Account Settings</h1>
+            </div>
+            
+            <div class="settings-grid">
+                <!-- Account Settings -->
+                <form id="account-settings-form" class="settings-card">
+                    <div class="settings-header">
+                        <i class="fas fa-user"></i>
+                        <h2>Account Information</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-group">
+                            <label for="settings-fullname">Full Name</label>
+                            <div class="settings-value-container">
+                                <div id="settings-fullname" class="settings-value">Loading...</div>
+                                <input type="text" id="edit-fullname" class="settings-edit-input" style="display: none;">
+                            </div>
+                            <button type="button" class="btn-edit" onclick="editField('fullname')">Edit</button>
+                        </div>
+                        <div class="settings-group">
+                            <label for="settings-email">Email Address</label>
+                            <div class="settings-value-container">
+                                <div id="settings-email" class="settings-value">Loading...</div>
+                                <input type="email" id="edit-email" class="settings-edit-input" style="display: none;">
+                            </div>
+                            <button type="button" class="btn-edit" onclick="editField('email')">Change</button>
+                        </div>
+                        <div class="settings-group">
+                            <label>Account Created</label>
+                            <div id="settings-created" class="settings-value">Loading...</div>
+                        </div>
+                        <div class="form-actions" style="margin-top: 20px;">
+                            <button type="submit" class="btn-save" style="display: none;">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+
+                <!-- Notification Preferences -->
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <i class="fas fa-bell"></i>
+                        <h2>Notifications</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-group">
+                            <label>Email Notifications</label>
+                            <div class="settings-value">Order updates, promotions</div>
+                            <label class="switch">
+                                <input type="checkbox" name="email-notifications" class="notification-toggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-group">
+                            <label>Push Notifications</label>
+                            <div class="settings-value">Order updates, promotions</div>
+                            <label class="switch">
+                                <input type="checkbox" name="push-notifications" class="notification-toggle" checked>
+                                <span class="slider round"></span>
+                            </label>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                        <div class="settings-group">
+                            <label>SMS Alerts</label>
+                            <div class="settings-value">Order status updates</div>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider round"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Address Book -->
+                <div class="settings-card">
+                    <div class="settings-header">
+                        <i class="fas fa-address-book"></i>
+                        <h2>Address Book</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="address-card">
+                            <div class="address-type">Home</div>
+                            <div class="address-details">
+                                123 Main Street,<br>
+                                Bangalore, Karnataka 560001<br>
+                                Phone: +91 98765 43210
+                            </div>
+                            <div class="address-actions">
+                                <button class="btn-edit">Edit</button>
+                                <button class="btn-remove">Remove</button>
+                            </div>
+                        </div>
+                        <button class="btn-add-address">
+                            <i class="fas fa-plus"></i> Add New Address
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Account Actions -->
+                <div class="settings-card danger-zone">
+                    <div class="settings-header">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h2>Danger Zone</h2>
+                    </div>
+                    <div class="settings-content">
+                        <div class="settings-group">
+                            <div>
+                                <label>Delete Account</label>
+                                <div class="settings-value">Permanently delete your account and all data</div>
+                            </div>
+                            <button class="btn-danger">Delete My Account</button>
+                        </div>
+                        <div class="settings-group">
+                            <div>
+                                <label>Download Data</label>
+                                <div class="settings-value">Download a copy of your personal data</div>
+                            </div>
+                            <button class="btn-outline">Request Data</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Password Change Modal -->
+        <div id="passwordModal" class="modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>Change Password</h2>
+                <form id="passwordForm">
+                    <div class="form-group">
+                        <label>Current Password</label>
+                        <input type="password" placeholder="Enter current password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>New Password</label>
+                        <input type="password" placeholder="Enter new password" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirm New Password</label>
+                        <input type="password" placeholder="Confirm new password" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel">Cancel</button>
+                        <button type="submit" class="btn-primary">Update Password</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <main id="profile" class="hidden">
+        <div class="profile-container">
+            <div class="profile-sidebar">
+                <div class="profile-pic">
+                    <img src="https://placehold.co/400x400" alt="Profile Picture" id="profilePicture">
+                    <button class="change-photo-btn">Change Photo</button>
+                </div>
+                <div class="profile-nav">
+                    <button class="profile-nav-btn active" data-section="personal">
+                        <i class="fas fa-user"></i> Personal Information
+                    </button>
+                    <button class="profile-nav-btn" data-section="addresses">
+                        <i class="fas fa-map-marker-alt"></i> My Addresses
+                    </button>
+                    <button class="profile-nav-btn" data-section="wishlist">
+                        <i class="fas fa-heart"></i> Wishlist
+                    </button>
+                    <button class="profile-nav-btn" data-section="security">
+                        <i class="fas fa-lock"></i> Security
+                    </button>
+                </div>
+            </div>
+            <div class="profile-content">
+                <div class="profile-section active" id="personal-section">
+                    <h2>Personal Information</h2>
+                    <form class="profile-form">
+                        <div class="form-group">
+                            <label for="fullName">Full Name</label>
+                            <input type="text" id="fullName" value="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" value="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" value="+91 9876543210">
+                        </div>
+                        <div class="form-group">
+                            <label>Date of Birth</label>
+                            <div class="dob-fields">
+                                <select id="day">
+                                    <option>Day</option>
+                                    <!-- Days will be populated by JS -->
+                                </select>
+                                <select id="month">
+                                    <option>Month</option>
+                                    <option value="1">January</option>
+                                    <option value="2">February</option>
+                                    <!-- Other months -->
+                                </select>
+                                <select id="year">
+                                    <option>Year</option>
+                                    <!-- Years will be populated by JS -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Gender</label>
+                            <div class="radio-group">
+                                <label><input type="radio" name="gender" value="male" checked> Male</label>
+                                <label><input type="radio" name="gender" value="female"> Female</label>
+                                <label><input type="radio" name="gender" value="other"> Other</label>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn-save">Save Changes</button>
+                    </form>
+                </div>
+
+                <div class="profile-section" id="addresses-section">
+                    <div class="section-header">
+                        <h2>My Addresses</h2>
+                        <button class="btn-add-address">+ Add New Address</button>
+                    </div>
+                    <div class="addresses-grid">
+                        <div class="address-card default">
+                            <div class="address-header">
+                                <h3>Home</h3>
+                                <span class="default-badge">Default</span>
+                            </div>
+                            <p>123 Green Valley Apartments</p>
+                            <p>Mumbai, Maharashtra 400001</p>
+                            <p>India</p>
+                            <p>Phone: +91 9876543210</p>
+                            <div class="address-actions">
+                                <button class="btn-edit">Edit</button>
+                                <button class="btn-remove">Remove</button>
+                                <button class="btn-set-default">Set as Default</button>
+                            </div>
+                        </div>
+                        <!-- More address cards will be added dynamically -->
+                    </div>
+                </div>
+
+                <div class="profile-section" id="wishlist-section">
+                    <h2>My Wishlist</h2>
+                    <div class="wishlist-grid">
+                        <!-- Wishlist items will be loaded here -->
+                        <div class="empty-wishlist">
+                            <i class="fas fa-heart"></i>
+                            <p>Your wishlist is empty</p>
+                            <a href="#shop" class="btn-shop-now">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="profile-section" id="security-section">
+                    <h2>Security</h2>
+                    <form class="security-form">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword">
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <span class="strength-segment"></span>
+                                <span class="strength-segment"></span>
+                                <span class="strength-segment"></span>
+                                <span class="strength-segment"></span>
+                            </div>
+                            <p class="strength-text">Password strength: <span>Weak</span></p>
+                        </div>
+                        <button type="submit" class="btn-update-password">Update Password</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="orders" class="hidden">
+        <div class="orders-container">
+            <h1>My Orders</h1>
+            <div class="order-filters">
+                <button class="filter-btn active" data-filter="all">All Orders</button>
+                <button class="filter-btn" data-filter="pending">Pending</button>
+                <button class="filter-btn" data-filter="processing">Processing</button>
+                <button class="filter-btn" data-filter="shipped">Shipped</button>
+                <button class="filter-btn" data-filter="delivered">Delivered</button>
+                <button class="filter-btn" data-filter="cancelled">Cancelled</button>
+            </div>
+
+            <div class="orders-list">
+                <!-- Order cards will be added here -->
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <span class="order-id">Order #HD20230831001</span>
+                            <span class="order-date">Placed on August 31, 2023</span>
+                        </div>
+                        <div class="order-status processing">Processing</div>
+                    </div>
+                    <div class="order-items">
+                        <div class="order-item">
+                            <img src="assets/product home page/1.png" alt="Almonds" class="item-image">
+                            <div class="item-details">
+                                <h3>Premium California Almonds</h3>
+                                <p class="item-quantity">Quantity: 2</p>
+                                <p class="item-price">₹800.00</p>
+                            </div>
+                        </div>
+                        <div class="order-item">
+                            <img src="assets/product home page/2.png" alt="Cashews" class="item-image">
+                            <div class="item-details">
+                                <h3>Premium Kaju Cashews</h3>
+                                <p class="item-quantity">Quantity: 1</p>
+                                <p class="item-price">₹650.00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-summary">
+                        <div class="order-total">
+                            <span>Total Amount:</span>
+                            <span class="amount">₹1,450.00</span>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn-track">Track Order</button>
+                            <button class="btn-cancel">Cancel Order</button>
+                            <button class="btn-view-details">View Details</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="order-card">
+                    <div class="order-header">
+                        <div class="order-info">
+                            <span class="order-id">Order #HD20230828001</span>
+                            <span class="order-date">Delivered on August 30, 2023</span>
+                        </div>
+                        <div class="order-status delivered">Delivered</div>
+                    </div>
+                    <div class="order-items">
+                        <div class="order-item">
+                            <img src="assets/product home page/3.png" alt="Pistachios" class="item-image">
+                            <div class="item-details">
+                                <h3>Premium Iranian Pistachios</h3>
+                                <p class="item-quantity">Quantity: 1</p>
+                                <p class="item-price">₹1,200.00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="order-summary">
+                        <div class="order-total">
+                            <span>Total Amount:</span>
+                            <span class="amount">₹1,200.00</span>
+                        </div>
+                        <div class="order-actions">
+                            <button class="btn-track">Track Order</button>
+                            <button class="btn-buy-again">Buy Again</button>
+                            <button class="btn-rate">Rate & Review</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="empty-orders">
+                    <i class="fas fa-shopping-bag"></i>
+                    <h3>No Orders Found</h3>
+                    <p>You haven't placed any orders yet.</p>
+                    <a href="#shop" class="btn-shop-now">Start Shopping</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="about" class="hidden">
+        <div class="about-hero">
+            <div class="about-hero-content">
+                <h1>Our Story</h1>
+                <p>Premium Quality Dry Fruits & Nuts, Delivered to Your Doorstep</p>
+            </div>
+        </div>
+
+        <section class="about-section">
+            <div class="container">
+                <div class="about-grid">
+                    <div class="about-content">
+                        <h2>Welcome to Haryali DryFruits</h2>
+                        <p>Established in 2015, Haryali DryFruits has been at the forefront of providing premium quality dry fruits and nuts to health-conscious consumers across India. What started as a small family business has now grown into a trusted brand known for its commitment to quality and customer satisfaction.</p>
+                        <p>We source our products directly from farmers and trusted suppliers to ensure you get the freshest and most nutritious dry fruits and nuts. Our state-of-the-art processing facility maintains the highest standards of hygiene and quality control.</p>
+                    </div>
+                    <div class="about-image">
+                        <img src="assets/product home page/1.png" alt="Haryali DryFruits Selection" class="about-img">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="mission-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Our Mission & Values</h2>
+                    <p>What drives us every day</p>
+                </div>
+                <div class="values-grid">
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h3>Quality First</h3>
+                        <p>We handpick only the finest quality dry fruits and nuts, ensuring you get maximum nutritional benefits with every bite.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3>Health & Wellness</h3>
+                        <p>Promoting a healthy lifestyle through natural, nutrient-rich products that nourish both body and mind.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-leaf"></i>
+                        </div>
+                        <h3>Sustainability</h3>
+                        <p>Committed to eco-friendly practices and supporting sustainable farming communities.</p>
+                    </div>
+                    <div class="value-card">
+                        <div class="value-icon">
+                            <i class="fas fa-award"></i>
+                        </div>
+                        <h3>Customer Trust</h3>
+                        <p>Building lasting relationships through transparency, quality, and exceptional service.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="team-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Meet Our Team</h2>
+                    <p>The people behind Haryali DryFruits</p>
+                </div>
+                <div class="team-grid">
+                    <div class="team-member">
+                        <div class="member-image">
+                            <img src="https://placehold.co/200x200" alt="Team Member" class="team-img">
+                        </div>
+                        <h3>Rajesh Kumar</h3>
+                        <p class="position">Founder & CEO</p>
+                        <p class="bio">With over 15 years of experience in the food industry, Rajesh is passionate about bringing the finest dry fruits to your table.</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-image">
+                            <img src="https://placehold.co/200x200" alt="Team Member" class="team-img">
+                        </div>
+                        <h3>Priya Sharma</h3>
+                        <p class="position">Head of Quality Control</p>
+                        <p class="bio">Ensuring every product that leaves our facility meets the highest standards of quality and safety.</p>
+                    </div>
+                    <div class="team-member">
+                        <div class="member-image">
+                            <img src="https://placehold.co/200x200" alt="Team Member" class="team-img">
+                        </div>
+                        <h3>Amit Patel</h3>
+                        <p class="position">Customer Experience</p>
+                        <p class="bio">Dedicated to making sure every customer has an exceptional shopping experience with us.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="testimonials-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>What Our Customers Say</h2>
+                    <p>Hear from people who love our products</p>
+                </div>
+                <div class="testimonials-slider">
+                    <div class="testimonial">
+                        <div class="quote">"The quality of dry fruits is exceptional! I've been a loyal customer for over 2 years now."</div>
+                        <div class="customer">
+                            <div class="customer-info">
+                                <h4>Anjali Mehta</h4>
+                                <p>Mumbai</p>
+                            </div>
+                            <div class="rating">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="testimonial">
+                        <div class="quote">"Fast delivery and premium quality products. Haryali is my go-to for all dry fruit needs."</div>
+                        <div class="customer">
+                            <div class="customer-info">
+                                <h4>Rahul Verma</h4>
+                                <p>Delhi</p>
+                            </div>
+                            <div class="rating">★★★★★</div>
+                        </div>
+                    </div>
+                    <div class="testimonial">
+                        <div class="quote">"Excellent customer service and the almonds are the best I've ever had. Highly recommended!"</div>
+                        <div class="customer">
+                            <div class="customer-info">
+                                <h4>Meera Krishnan</h4>
+                                <p>Bangalore</p>
+                            </div>
+                            <div class="rating">★★★★★</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="container">
+                <h2>Ready to Experience Premium Quality?</h2>
+                <p>Join thousands of satisfied customers who trust Haryali DryFruits for their daily nutrition needs.</p>
+                <a href="#" class="cta-button" onclick="showSection('shop')">Shop Now</a>
+            </div>
+        </section>
+
+        <section class="contact-section">
+            <div class="container">
+                <div class="contact-grid">
+                    <div class="contact-info">
+                        <h3>Get In Touch</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> 123 Green Valley, Mumbai, Maharashtra 400001</p>
+                        <p><i class="fas fa-phone"></i> +91 98765 43210</p>
+                        <p><i class="fas fa-envelope"></i> info@haryalidryfruits.com</p>
+                        <div class="social-links">
+                            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                            <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                        </div>
+                    </div>
+                    <div class="contact-form">
+                        <h3>Send Us a Message</h3>
+                        <form id="contactForm">
+                            <div class="form-group">
+                                <input type="text" placeholder="Your Name" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="email" placeholder="Your Email" required>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" placeholder="Subject" required>
+                            </div>
+                            <div class="form-group">
+                                <textarea placeholder="Your Message" rows="4" required></textarea>
+                            </div>
+                            <button type="submit" class="submit-btn">Send Message</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">Haryali DryFruits</div>
+            <div class="footer-links">
+                <a href="#">Home</a>
+                <a href="#products">Products</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#promise">Our Promise</a>
+                <a href="#">Contact Us</a>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+                <a href="#"><i class="fab fa-whatsapp"></i></a>
+            </div>
+            <div class="copyright">
+                &copy; 2023 Haryali DryFruits. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <!-- Auth Modal -->
+    <div class="auth-modal" id="auth-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="auth-header">
+                <h2>Welcome to Haryali Dry Fruits!</h2>
+                <p>Sign in with Google to continue</p>
+            </div>
+            
+            <div class="auth-forms">
+                <div class="auth-form active">
+                    <button type="button" class="google-signin-btn" id="google-signin-btn">
+                        <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google" class="google-logo">
+                        <span>Continue with Google</span>
+                    </button>
+                    <button id="logout-btn" class="logout-btn" style="display: none;">
+                        <i class="fas fa-sign-out-alt"></i> Sign Out
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel (initially hidden) -->
+    <div id="admin-panel" class="admin-panel" style="display: none;">
+        <div class="admin-header">
+            <h2>Admin Dashboard</h2>
+            <button id="close-admin-panel" class="close-button">×</button>
+        </div>
+        <div class="admin-content">
+            <div class="admin-stats">
+                <div class="stat-card">
+                    <h3>Total Users</h3>
+                    <p id="total-users">0</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Orders</h3>
+                    <p id="total-orders">0</p>
+                </div>
+            </div>
+            <div class="admin-section">
+                <h3>User Management</h3>
+                <div class="table-responsive">
+                    <table id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-list">
+                            <!-- Users will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="js/firebase.js"></script>
+    <!-- Auth Script -->
+    <script src="js/auth.js" type="module"></script>
+    <script src="js/firebase.js" type="module"></script>
+    <script src="js/settings.js" type="module"></script>
+    <script src="js/cart.js" type="module"></script>
+    <script src="script.js"></script>
     <script>
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
-        function setBackgroundColor() {
-            const randomColor = getRandomColor();
-            document.body.style.backgroundColor = randomColor;
-            document.getElementById('colorCode').textContent = randomColor;
-        }
-        setBackgroundColor(); // Set initial background color
-        setInterval(setBackgroundColor, 3000); // Change every 3 seconds
+        // Debug script to check for errors
+        window.addEventListener('error', function(e) {
+            console.error('JavaScript Error:', e.message, 'in', e.filename, 'line', e.lineno);
+            return false;
+        });
+        
+        // Log when scripts are loaded
+        console.log('Main scripts loaded');
+    </script>
+    <script>
+        // Verify script is loaded and elements exist
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM fully loaded');
+            console.log('Login button:', document.getElementById('login-button'));
+            console.log('Auth modal:', document.getElementById('auth-modal'));
+        });
     </script>
 </body>
 </html>
