@@ -170,10 +170,11 @@ header.scrolled .header-top {
     transition: transform 0.3s ease;
     padding: 5px;
     border-radius: 50%;
+    transition: all 0.3s ease-in-out;
 }
 
 .cart-icon:hover {
-    transform: scale(1.1);
+    transform: scale(0.97);
 }
 
 .cart-icon:active {
@@ -233,43 +234,23 @@ header.scrolled .header-top {
 }
 
 .menu-icon {
-display: flex;
-flex-direction: column;
-justify-content: center;
-align-items: center;
-width: 35px;
-height: 35px;
-gap: 4px;
-cursor: pointer;
-padding: 8px;
-position: relative;
-z-index: 1000;
-border-radius: 50%;
-transition: all 0.3s ease;
-}
-
-/* Header Styles */
-header {
-background: linear-gradient(135deg, #2e7d32, #1b5e20);
-color: white;
-padding: 1rem 0;
-position: fixed;
-width: 100%;
-top: 0;
-left: 0;
-right: 0;
-z-index: 1000;
-transition: all 0.3s ease;
-}
-
-/* Header when scrolled */
-header.scrolled {
-padding: 0.5rem 0;
-box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 35px;
+    height: 35px;
+    gap: 4px;
+    cursor: pointer;
+    padding: 8px;
+    position: relative;
+    z-index: 1000;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
 
 .menu-icon:hover {
-background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .menu-icon:active {
@@ -286,7 +267,6 @@ background: rgba(255, 255, 255, 0.1);
 
 .header-actions .nav-icon {
     position: relative;
-    color: #333;
     font-size: 1.3rem;
     margin-left: 20px;
     text-decoration: none;
@@ -294,10 +274,6 @@ background: rgba(255, 255, 255, 0.1);
     align-items: center;
     transition: color 0.3s ease;
     padding: 5px;
-}
-
-.header-actions .nav-icon:hover {
-    color: #ff6b6b;
 }
 
 .header-actions .wishlist-icon {
@@ -346,7 +322,14 @@ background: rgba(255, 255, 255, 0.1);
     color: #666;
 }
 
+.fa-heart{
+    position: relative;
+}
+
 .wishlist-count-small {
+    position: absolute;
+    top: 136px;
+    right: 10px;
     background: #ff6b6b;
     color: white;
     border-radius: 10px;
@@ -933,21 +916,10 @@ input:checked + .slider:before {
 
 .testimonial {
     background: white;
-    padding: 30px;
+    padding: 10px;
     border-radius: 10px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     position: relative;
-}
-
-.testimonial::before {
-    content: '"\201C';
-    font-size: 5rem;
-    color: #e0e0e0;
-    position: absolute;
-    top: 10px;
-    left: 20px;
-    line-height: 1;
-    font-family: Georgia, serif;
 }
 
 .quote {
@@ -1653,9 +1625,10 @@ input:checked + .slider:before {
 
 /* Wishlist Section */
 .wishlist-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 15px;
 }
 
 .empty-wishlist, .empty-orders {
@@ -2785,6 +2758,8 @@ main {
 
 .cart-content.active {
     display: flex;
+    justify-content: center;
+    align-items: center;
     gap: 30px;
     flex-wrap: wrap;
 }
@@ -3147,7 +3122,7 @@ main {
 }
 
 .product-card:hover .product-card__image {
-    transform: scale(1.15);
+    transform: scale(1.05);
 }
 
 .product-card__badge {
@@ -3343,8 +3318,8 @@ main {
 
 .testimonial {
     background: white;
-    padding: 50px;
-    border-radius: 40px;
+    padding: 30px;
+    border-radius: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
     max-width: 400px;
     position: relative;
@@ -4001,11 +3976,6 @@ tr:hover {
 /* Product Card Responsive Styles */
 .product-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.product-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
 }
 
 .product-card__content h3 {

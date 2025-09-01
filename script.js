@@ -293,7 +293,7 @@ function updateHeaderState() {
     const headerHeight = header.offsetHeight;
     const scrollThreshold = headerHeight * 0.5; // Start animation after scrolling 50% of header height
     const mainSections = document.querySelectorAll('main');
-    const headerMargin = '350px'; // Fixed margin for all main sections
+    const headerMargin = '400px'; // Fixed margin for all main sections
     
     if (scrollPosition > scrollThreshold) {
         // Scrolled down - hide elements and adjust header

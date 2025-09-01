@@ -1,10 +1,10 @@
 /* Cart Message */
 .message {
     position: fixed;
-    top: 20px;
+    bottom: 20px;
     right: 20px;
     padding: 12px 24px;
-    border-radius: 4px;
+    border-radius: 10px;
     color: white;
     font-weight: 500;
     z-index: 1000;
@@ -31,32 +31,194 @@
     background-color: #2196f3;
 }
 
-/* Cart Page */
+/* Cart Page Layout */
 .cart-container {
     max-width: 1200px;
     margin: 2rem auto;
     padding: 0 1rem;
 }
 
-/* Cart Tabs */
-#cart-header {
+.cart-layout {
     display: flex;
-    border-bottom: 1px solid #e0e0e0;
-    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 2rem;
 }
 
-#cart-header h2 {
+.cart-main {
+    flex: 1;
+    min-width: 0; /* Prevents flex items from overflowing */
+}
+
+/* Cart Tabs */
+.section-header {
+    display: flex;
+    border-bottom: 1px solid #e0e0e0;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h2 {
     padding: 0.75rem 1.5rem;
     margin: 0;
     cursor: pointer;
     color: #666;
     font-weight: 500;
     position: relative;
-    transition: color 0.2s ease;
+    transition: all 0.2s ease;
+    border: none;
+    background: none;
 }
 
-#cart-header h2:hover {
+.section-header h2:hover {
+    color: #2e7d32;
+}
+
+.section-header h2.active {
+    color: #2e7d32;
+    font-weight: 600;
+}
+
+.section-header h2.active::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #2e7d32;
+}
+
+/* Cart Content Tabs */
+.cart-content {
+    display: none;
+}
+
+.cart-content.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Wishlist Styles */
+.wishlist-grid {
+    padding: 1rem 0;
+}
+
+.wishlist-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+}
+
+.wishlist-item {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.wishlist-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.wishlist-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+}
+
+.wishlist-item-details {
+    padding: 1rem;
+}
+
+.wishlist-item h3 {
+    margin: 0 0 0.5rem;
+    font-size: 1.1rem;
     color: #333;
+}
+
+.wishlist-item .price {
+    font-weight: bold;
+    color: #4caf50;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.wishlist-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.wishlist-item-actions button {
+    flex: 1;
+    padding: 0.5rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.wishlist-item-actions .add-to-cart {
+    background-color: #4caf50;
+    color: white;
+}
+
+.wishlist-item-actions .remove-item {
+    background-color: #f5f5f5;
+    color: #666;
+}
+
+.wishlist-item-actions .add-to-cart:hover {
+    background-color: #3e8e41;
+}
+
+.wishlist-item-actions .remove-item:hover {
+    background-color: #e0e0e0;
+}
+
+.empty-wishlist {
+    text-align: center;
+    padding: 3rem 1rem;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+}
+
+.empty-wishlist i {
+    font-size: 3rem;
+    color: #e0e0e0;
+    margin-bottom: 1rem;
+}
+
+.empty-wishlist h3 {
+    margin: 0 0 0.5rem;
+    color: #333;
+}
+
+.empty-wishlist p {
+    margin: 0 0 1.5rem;
+}
+
+.empty-wishlist .btn {
+    padding: 0.75rem 1.5rem;
+    background-color: #4caf50;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.empty-wishlist .btn:hover {
+    background-color: #3e8e41;
 }
 
 #cart-header h2.active {
@@ -164,36 +326,6 @@
     margin: 0.5rem 0;
 }
 
-.quantity-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 1rem 0;
-}
-
-.quantity-btn {
-    width: 30px;
-    height: 30px;
-    border: 1px solid #ddd;
-    background: #f9f9f9;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-}
-
-.quantity-btn:hover {
-    background: #eee;
-}
-
-.quantity {
-    min-width: 30px;
-    text-align: center;
-    font-weight: 500;
-}
 
 .remove-item {
     background: none;
@@ -217,15 +349,22 @@
     min-width: 100px;
     text-align: right;
 }
+
 /* Cart Summary */
 .cart-summary {
-    flex: 1;
     background: #f9f9f9;
     padding: 1.5rem;
     border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
     height: fit-content;
     position: sticky;
-    top: 1rem;
+    top: 2rem;
+}
+
+/* Hide summary in wishlist tab */
+#wishlist-content + .cart-summary {
+    display: none;
 }
 
 .cart-summary h3 {
@@ -332,37 +471,6 @@
     color: #333;
 }
 
-.quantity-controls {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 10px 0;
-}
-
-.quantity-controls button {
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    width: 30px;
-    height: 30px;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s ease;
-}
-
-.quantity-controls button:hover {
-    background: #e0e0e0;
-}
-
-.quantity-controls .quantity {
-    min-width: 30px;
-    text-align: center;
-    font-weight: 500;
-}
-
 .item-total {
     font-weight: 500;
     color: #333;
@@ -410,6 +518,26 @@
     padding: 1.5rem;
     border-radius: 8px;
     border: 1px solid #e0e0e0;
+}
+
+/* Detailed Subtotal Styles */
+.detailed-subtotal {
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+    color: #555;
+}
+
+.detailed-subtotal-item {
+    display: inline-block;
+    margin-right: 0.5rem;
+}
+
+.subtotal-amount {
+    display: block;
+    font-weight: 600;
+    color: #2e7d32;
+    margin-top: 0.5rem;
+    font-size: 1.1em;
 }
 
 .cart-summary h3 {
