@@ -353,19 +353,40 @@ const updateCartItem = async (userId, productId, updates) => {
 // Remove item from cart
 const removeFromCart = async (userId, productId) => {
     try {
+        console.log(`Attempting to remove product ${productId} for user ${userId}`);
         const userRef = doc(db, 'users', userId);
         const userDoc = await getDoc(userRef);
         
         if (!userDoc.exists()) {
+            console.error('User not found in database');
             return { success: false, error: 'User not found' };
         }
         
-        const cart = userDoc.data().cart || [];
-        const updatedCart = cart.filter(item => item.id !== productId);
+        const cart = Array.isArray(userDoc.data().cart) ? [...userDoc.data().cart] : [];
+        console.log('Current cart before removal:', cart);
         
-        if (updatedCart.length === cart.length) {
-            return { success: false, error: 'Item not found in cart' };
+        // Find the item to remove by either ID or name
+        const itemToRemove = cart.find(item => 
+            (item.id && item.id.toString() === productId.toString()) ||
+            (item.name && item.name === productId)
+        );
+        
+        if (!itemToRemove) {
+            console.error(`Item ${productId} not found in cart`);
+            return { 
+                success: false, 
+                error: 'Item not found in cart',
+                cart: cart // Return current cart for debugging
+            };
         }
+        
+        // Remove the item by both ID and name to be thorough
+        const updatedCart = cart.filter(item => 
+            (item.id !== itemToRemove.id || item.id === undefined) &&
+            (item.name !== itemToRemove.name || item.name === undefined)
+        );
+        
+        console.log('Updated cart after removal:', updatedCart);
         
         await setDoc(userRef, { cart: updatedCart }, { merge: true });
         
@@ -377,23 +398,128 @@ const removeFromCart = async (userId, productId) => {
         return { 
             success: true, 
             cart: updatedCart,
-            message: 'Item removed from cart successfully'
+            message: 'Item removed from cart successfully',
+            removedItem: itemToRemove
         };
     } catch (error) {
         console.error('Error removing from cart:', error);
         return { 
             success: false, 
-            error: error.message || 'Failed to remove item from cart'
+            error: error.message || 'Failed to remove item from cart',
+            stack: error.stack
         };
     }
 };
 
-// Expose functions to window object
-window.firebaseFunctions = window.firebaseFunctions || {};
-window.firebaseFunctions.addToCart = addToCart;
-window.firebaseFunctions.getCart = getCart;
-window.firebaseFunctions.removeFromCart = removeFromCart;
-window.firebaseFunctions.updateCartItem = updateCartItem;
+// Initialize firebaseFunctions if it doesn't exist
+if (!window.firebaseFunctions) {
+    window.firebaseFunctions = {};
+}
+
+// Wishlist Management
+window.firebaseFunctions.addToWishlist = async (userId, product) => {
+    try {
+        // Create a reference to the user's wishlist
+        const wishlistRef = doc(db, 'user-wishlist', userId);
+        const wishlistSnap = await getDoc(wishlistRef);
+        
+        let wishlist = [];
+        
+        // If wishlist exists, get the current items
+        if (wishlistSnap.exists()) {
+            const data = wishlistSnap.data();
+            wishlist = data.products?.wishlist || [];
+            
+            // Check if product already exists
+            if (wishlist.some(item => item.id === product.id)) {
+                return { success: true, message: 'Product already in wishlist' };
+            }
+        }
+        
+        // Add the new product to wishlist
+        wishlist.push(product);
+        
+        // Update the wishlist in Firestore
+        await setDoc(wishlistRef, {
+            userId: userId,
+            products: {
+                wishlist: wishlist,
+                updatedAt: serverTimestamp()
+            }
+        }, { merge: true });
+        
+        return { success: true };
+    } catch (error) {
+        console.error('Error adding to wishlist:', error);
+        return { success: false, error: error.message };
+    }
+};
+
+// Get user's wishlist
+window.firebaseFunctions.getWishlist = async (userId) => {
+  try {
+    const wishlistRef = doc(db, 'user-wishlist', userId);
+    const wishlistSnap = await getDoc(wishlistRef);
+    
+    if (wishlistSnap.exists()) {
+      const data = wishlistSnap.data();
+      return { 
+        success: true, 
+        wishlist: data.products?.wishlist || [] 
+      };
+    }
+    return { success: true, wishlist: [] }; // Return empty array if no wishlist exists
+  } catch (error) {
+    console.error('Error getting wishlist:', error);
+    return { success: false, error: error.message, wishlist: [] };
+  }
+};
+
+// Remove item from wishlist
+window.firebaseFunctions.removeFromWishlist = async (userId, productId) => {
+  try {
+    const wishlistRef = doc(db, 'user-wishlist', userId);
+    const wishlistSnap = await getDoc(wishlistRef);
+    
+    if (!wishlistSnap.exists()) {
+      return { success: true }; // Nothing to remove
+    }
+    
+    const data = wishlistSnap.data();
+    const wishlist = data.products?.wishlist || [];
+    
+    // Filter out the product to remove
+    const updatedWishlist = wishlist.filter(item => item.id !== productId);
+    
+    // Update the wishlist in Firestore
+    await setDoc(wishlistRef, {
+      userId: userId,
+      products: {
+        wishlist: updatedWishlist,
+        updatedAt: serverTimestamp()
+      }
+    }, { merge: true });
+    
+    return { success: true };
+  } catch (error) {
+    console.error('Error removing from wishlist:', error);
+    return { success: false, error: error.message };
+  }
+};
+
+// Expose all functions to window.firebaseFunctions
+const firebaseFunctions = {
+    addToCart,
+    getCart,
+    getCurrentUser: () => auth.currentUser,
+    removeFromCart,
+    updateCartItem,
+    // Wishlist functions are already assigned to window.firebaseFunctions
+    // in their respective definitions
+};
+
+// Assign all functions to window.firebaseFunctions
+Object.assign(window.firebaseFunctions, firebaseFunctions);
 
 // Initialize auth state listener
 onAuthStateChanged(auth, (user) => {

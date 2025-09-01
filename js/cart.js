@@ -23,24 +23,29 @@ const cartCountElement = document.querySelector('.cart-count');
 window.updateCartItemQuantity = async (productId, change) => {
     try {
         let cart = JSON.parse(localStorage.getItem('cart') || '[]');
-        const item = cart.find(item => item.id === productId);
+        const itemIndex = cart.findIndex(item => item.id === productId);
         
-        if (!item) return;
+        if (itemIndex === -1) return false;
         
         // Update quantity locally
-        item.quantity = (item.quantity || 1) + change;
+        const newQuantity = (cart[itemIndex].quantity || 1) + change;
         
-        if (item.quantity <= 0) {
+        if (newQuantity <= 0) {
             // Remove item if quantity is 0 or less
-            cart = cart.filter(i => i.id !== productId);
+            cart = cart.filter(item => item.id !== productId);
+        } else {
+            // Update quantity
+            cart[itemIndex].quantity = newQuantity;
         }
         
-        // Always update localStorage for both logged-in and guest users
+        // Update localStorage
         localStorage.setItem('cart', JSON.stringify(cart));
         
         // Update UI
         await updateCartCount();
         await displayCartItems();
+        
+        return true;
     } catch (error) {
         console.error('Error updating cart item quantity:', error);
         showMessage('Failed to update cart item quantity', 'error');
@@ -50,6 +55,15 @@ window.updateCartItemQuantity = async (productId, change) => {
 window.removeFromCart = async (productId) => {
     try {
         const currentUser = window.firebaseAuth?.currentUser;
+        console.log('Removing product with ID:', productId);
+        
+        // Immediately remove the item from the UI for better UX
+        const cartItemElement = document.querySelector(`.cart-item[data-product-id="${productId}"]`);
+        if (cartItemElement) {
+            cartItemElement.style.opacity = '0.5';
+            cartItemElement.style.pointerEvents = 'none';
+            cartItemElement.querySelector('.remove-item').textContent = 'Removing...';
+        }
         
         if (currentUser) {
             // For logged-in users, remove from Firebase
@@ -61,22 +75,70 @@ window.removeFromCart = async (productId) => {
                 }
                 
                 const cart = cartResult.cart || [];
-                const itemToRemove = cart.find(item => item.id === productId);
+                console.log('Current cart items:', cart);
+                
+                // Find item by ID or name (for backward compatibility)
+                const itemToRemove = cart.find(item => 
+                    (item.id && item.id.toString() === productId.toString()) ||
+                    (item.name && item.name === productId)
+                );
                 
                 if (!itemToRemove) {
+                    // If we couldn't find the item, refresh the cart to sync
+                    if (cartItemElement) {
+                        cartItemElement.remove();
+                    }
                     throw new Error('Item not found in cart');
                 }
                 
-                // Now proceed with removal
-                const result = await window.firebaseFunctions.removeFromCart(currentUser.uid, productId);
+                console.log('Found item to remove:', itemToRemove);
+                
+                // Now proceed with removal using the exact ID from the found item
+                const result = await window.firebaseFunctions.removeFromCart(
+                    currentUser.uid, 
+                    itemToRemove.id || productId
+                );
                 
                 if (result && result.success) {
                     // Update local storage to match Firebase
                     localStorage.setItem('cart', JSON.stringify(result.cart || []));
                     
-                    // Update UI
+                    // Remove the item from the UI immediately
+                    if (cartItemElement) {
+                        cartItemElement.remove();
+                    }
+                    
+                    // Check if cart is now empty
+                    if (result.cart && result.cart.length === 0) {
+                        // Show empty cart message immediately
+                        const emptyCart = document.querySelector('.empty-cart');
+                        const cartContainer = document.querySelector('.cart-items');
+                        const cartSummary = document.querySelector('.cart-summary');
+                        const checkoutButton = document.querySelector('.btn-checkout');
+                        
+                        if (emptyCart) emptyCart.style.display = 'flex';
+                        if (cartSummary) cartSummary.style.display = 'none';
+                        if (checkoutButton) checkoutButton.disabled = true;
+                        
+                        // Clear any remaining items and show empty cart message
+                        if (cartContainer) {
+                            const emptyCartMessage = cartContainer.querySelector('.empty-cart') || document.createElement('div');
+                            if (!emptyCartMessage.classList.contains('empty-cart')) {
+                                emptyCartMessage.className = 'empty-cart';
+                                emptyCartMessage.innerHTML = `
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <h3>Your cart is empty</h3>
+                                    <p>Looks like you haven't added anything to your cart yet</p>
+                                    <button class="btn-primary" onclick="showSection('home')">Continue Shopping</button>
+                                `;
+                                cartContainer.appendChild(emptyCartMessage);
+                            }
+                            emptyCartMessage.style.display = 'flex';
+                        }
+                    }
+                    
+                    // Update the cart count
                     await updateCartCount();
-                    await displayCartItems();
                     
                     // Show success message
                     showMessage('Product removed from cart', 'success');
@@ -105,18 +167,70 @@ window.removeFromCart = async (productId) => {
         } else {
             // For guests, use localStorage
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const itemToRemove = cart.find(item => item.id === productId);
+            console.log('Guest cart items:', cart);
+            
+            // Find item by ID or name (for backward compatibility)
+            const itemToRemove = cart.find(item => 
+                (item.id && item.id.toString() === productId.toString()) ||
+                (item.name && item.name === productId)
+            );
             
             if (!itemToRemove) {
+                // If we couldn't find the item, remove its element if it exists
+                if (cartItemElement) {
+                    cartItemElement.remove();
+                }
                 throw new Error('Item not found in cart');
             }
             
-            const updatedCart = cart.filter(item => item.id !== productId);
+            console.log('Found guest item to remove:', itemToRemove);
+            
+            // Remove using the exact ID from the found item
+            const updatedCart = cart.filter(item => 
+                item.id !== (itemToRemove.id || productId) && 
+                item.name !== (itemToRemove.name || productId)
+            );
+            
             localStorage.setItem('cart', JSON.stringify(updatedCart));
             
+            // Remove the item from the UI immediately
+            if (cartItemElement) {
+                cartItemElement.remove();
+            }
+            
+            // Check if cart is now empty
+            if (updatedCart.length === 0) {
+                // Show empty cart message immediately
+                const emptyCart = document.querySelector('.empty-cart');
+                const cartContainer = document.querySelector('.cart-items');
+                const cartSummary = document.querySelector('.cart-summary');
+                const checkoutButton = document.querySelector('.btn-checkout');
+                
+                if (emptyCart) emptyCart.style.display = 'flex';
+                if (cartSummary) cartSummary.style.display = 'none';
+                if (checkoutButton) checkoutButton.disabled = true;
+                
+                // Clear any remaining items and show empty cart message
+                if (cartContainer) {
+                    const emptyCartMessage = cartContainer.querySelector('.empty-cart') || document.createElement('div');
+                    if (!emptyCartMessage.classList.contains('empty-cart')) {
+                        emptyCartMessage.className = 'empty-cart';
+                        emptyCartMessage.innerHTML = `
+                            <i class="fas fa-shopping-cart"></i>
+                            <h3>Your cart is empty</h3>
+                            <p>Looks like you haven't added anything to your cart yet</p>
+                            <button class="btn-primary" onclick="showSection('home')">Continue Shopping</button>
+                        `;
+                        cartContainer.appendChild(emptyCartMessage);
+                    }
+                    emptyCartMessage.style.display = 'flex';
+                }
+            }
+            
+            // Update the cart count
             await updateCartCount();
-            await displayCartItems();
-            showMessage(`${itemToRemove.name} removed from cart`, 'success');
+            
+            showMessage(`${itemToRemove.name || 'Item'} removed from cart`, 'success');
         }
     } catch (error) {
         console.error('Error in removeFromCart:', error);
@@ -124,10 +238,35 @@ window.removeFromCart = async (productId) => {
     }
 };
 
+// Function to switch between cart tabs
+function setupCartTabs() {
+    const tabHeaders = document.querySelectorAll('#cart-header h2');
+    const tabContents = document.querySelectorAll('.cart-content');
+    
+    tabHeaders.forEach(header => {
+        header.addEventListener('click', () => {
+            const tabId = header.getAttribute('data-tab');
+            
+            // Update active tab header
+            tabHeaders.forEach(h => h.classList.remove('active'));
+            header.classList.add('active');
+            
+            // Show corresponding tab content
+            tabContents.forEach(content => {
+                if (content.id === tabId) {
+                    content.classList.add('active');
+                } else {
+                    content.classList.remove('active');
+                }
+            });
+        });
+    });}
+
 // Initialize cart
 document.addEventListener('DOMContentLoaded', async () => {
     await updateCartCount();
     setupAddToCartButtons();
+    setupCartTabs();
     
     // Set up event delegation for cart interactions
     document.addEventListener('click', async (e) => {
@@ -140,11 +279,23 @@ document.addEventListener('DOMContentLoaded', async () => {
                 e.preventDefault();
                 const action = quantityBtn.dataset.action;
                 const productId = quantityBtn.dataset.productId;
+                const quantityElement = quantityBtn.parentElement.querySelector('.quantity');
+                let currentQuantity = parseInt(quantityElement.textContent) || 0;
                 
-                if (productId && (action === 'increase' || action === 'decrease')) {
-                    const change = action === 'increase' ? 1 : -1;
-                    await updateCartItemQuantity(productId, change);
+                if (action === 'increase') {
+                    currentQuantity += 1;
+                    await window.cartFunctions.updateCartItem(productId, { quantity: currentQuantity });
+                } else if (action === 'decrease' && currentQuantity > 1) {
+                    currentQuantity -= 1;
+                    await window.cartFunctions.updateCartItem(productId, { quantity: currentQuantity });
                 }
+                
+                // Update the UI immediately for better responsiveness
+                quantityElement.textContent = currentQuantity;
+                
+                // Update the cart count and total
+                await updateCartCount();
+                return;
             }
             // Handle remove item
             else if (removeBtn) {
@@ -336,42 +487,54 @@ async function displayCartItems() {
 
     // Generate cart items HTML
     const itemsHtml = await Promise.all(cart.map(async (item) => {
-        const productDetails = getProductDetails(item.name) || {
-            id: item.id,
-            name: item.name,
-            price: 0,
-            image: '',
-            category: 'Unavailable'
-        };
+        // First try to get details from the product catalog
+        let productDetails = getProductDetails(item.name);
         
-        subtotal += productDetails.price;
+        // If not found in catalog, use the item data directly
+        if (!productDetails) {
+            productDetails = {
+                id: item.id || Date.now().toString(),
+                name: item.name,
+                price: item.price || 0,
+                image: item.image || '',
+                category: item.category || 'Unavailable'
+            };
+        }
         
+        // Ensure we're using the ID from the cart item if it exists
+        const productId = item.id || productDetails.id;
+        const price = productDetails.price;
         const quantity = item.quantity || 1;
-        const itemTotal = (productDetails.price * quantity).toFixed(2);
+        const itemTotal = (price * quantity).toFixed(2);
+        
+        subtotal += price * quantity;
         
         return `
-            <div class="cart-item" data-product-id="${productDetails.id}">
+            <div class="cart-item" data-product-id="${productId}">
                 ${productDetails.image ? `
                 <div class="cart-item-image">
                     <img src="${productDetails.image}" alt="${productDetails.name}">
                 </div>` : ''}
                 <div class="cart-item-details">
                     <h4>${productDetails.name}</h4>
-                    ${productDetails.price > 0 ? `<p class="price">₹${productDetails.price.toFixed(2)}</p>` : ''}
+                    ${price > 0 ? `<p class="price">₹${price.toFixed(2)}</p>` : ''}
                     
                     <div class="quantity-controls">
-                        <button class="quantity-btn" data-action="decrease" data-product-id="${productDetails.id}">-</button>
+                        <button class="quantity-btn" data-action="decrease" data-product-id="${productId}">-</button>
                         <span class="quantity">${quantity}</span>
-                        <button class="quantity-btn" data-action="increase" data-product-id="${productDetails.id}">+</button>
+                        <button class="quantity-btn" data-action="increase" data-product-id="${productId}">+</button>
                     </div>
                     
                     <p class="item-total">Total: ₹${itemTotal}</p>
-                    <button class="remove-item" data-product-id="${productDetails.id}">Remove</button>
+                    <button class="remove-item" data-product-id="${productId}">Remove</button>
                 </div>
             </div>
         `;
     }));
 
+    // Calculate total items (sum of quantities)
+    const totalItems = cart.reduce((sum, item) => sum + (item.quantity || 1), 0);
+    
     // Calculate shipping (example: free shipping over ₹1000)
     const shipping = subtotal > 1000 ? 0 : 50;
     const total = subtotal + shipping;
@@ -379,16 +542,20 @@ async function displayCartItems() {
     // Update the cart container
     cartContainer.innerHTML = itemsHtml.join('');
     
-    // Update summary
-    if (totalItemsElement) totalItemsElement.textContent = cart.length;
+    // Update order summary with existing variables
+    if (totalItemsElement) totalItemsElement.textContent = totalItems;
     if (subtotalElement) subtotalElement.textContent = `₹${subtotal.toFixed(2)}`;
     if (shippingElement) {
         shippingElement.textContent = shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`;
+        const shippingNote = shippingElement.nextElementSibling;
+        if (shippingNote) {
+            shippingNote.textContent = shipping === 0 ? '' : '(Free shipping on orders over ₹1000)';
+        }
     }
     if (totalElement) totalElement.textContent = `₹${total.toFixed(2)}`;
 }
 
-// Update cart count in the UI
+// Update cart count in the UI and handle empty cart state
 async function updateCartCount() {
     try {
         const currentUser = window.firebaseAuth?.currentUser;
@@ -396,43 +563,75 @@ async function updateCartCount() {
         
         if (currentUser) {
             // For logged-in users, get cart from Firebase
-            try {
-                const result = await window.firebaseFunctions.getCart(currentUser.uid);
-                if (result && result.success) {
-                    cart = result.cart || [];
-                    // Keep localStorage in sync for offline access
-                    localStorage.setItem('cart', JSON.stringify(cart));
-                }
-            } catch (error) {
-                console.error('Error fetching cart from Firebase:', error);
-                // Fallback to localStorage if Firebase fails
-                cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const result = await window.firebaseFunctions.getCart(currentUser.uid);
+            if (result?.success) {
+                cart = result.cart || [];
+                // Keep localStorage in sync for offline access
+                localStorage.setItem('cart', JSON.stringify(cart));
             }
         } else {
             // For guests, use localStorage
             cart = JSON.parse(localStorage.getItem('cart') || '[]');
         }
         
-        cartCount = cart.length; // Each item is unique, so count is just the array length
+        // Update cart count
+        cartCount = cart.reduce((total, item) => total + (item.quantity || 1), 0);
         
-        // Update the cart count in the UI
+        // Update cart count in the UI
         if (cartCountElement) {
             cartCountElement.textContent = cartCount;
             cartCountElement.style.display = cartCount > 0 ? 'flex' : 'none';
         }
         
-        // Update cart count in the header
-        const headerCartCount = document.querySelector('.header-cart-count');
-        if (headerCartCount) {
-            headerCartCount.textContent = cartCount;
-            headerCartCount.style.display = cartCount > 0 ? 'flex' : 'none';
+        // Update cart count in the mobile menu if it exists
+        const mobileCartCount = document.querySelector('.mobile-menu .cart-count');
+        if (mobileCartCount) {
+            mobileCartCount.textContent = cartCount;
+            mobileCartCount.style.display = cartCount > 0 ? 'flex' : 'none';
         }
+        
+        // Handle empty cart state
+        const emptyCart = document.querySelector('.empty-cart');
+        const cartContainer = document.querySelector('.cart-items');
+        const cartSummary = document.querySelector('.cart-summary');
+        const checkoutButton = document.querySelector('.btn-checkout');
+        
+        if (cartCount === 0) {
+            // Show empty cart message
+            if (emptyCart) emptyCart.style.display = 'flex';
+            
+            // Clear cart items container but keep the empty cart message
+            if (cartContainer) {
+                const emptyCartMessage = cartContainer.querySelector('.empty-cart');
+                cartContainer.innerHTML = '';
+                if (emptyCartMessage) {
+                    cartContainer.appendChild(emptyCartMessage);
+                }
+            }
+            
+            // Hide cart summary and disable checkout
+            if (cartSummary) cartSummary.style.display = 'none';
+            if (checkoutButton) checkoutButton.disabled = true;
+            
+            // Update totals to zero
+            const subtotalElement = document.querySelector('.subtotal-amount');
+            const totalElement = document.querySelector('.total-amount');
+            const totalItemsElement = document.querySelector('.total-items');
+            
+            if (subtotalElement) subtotalElement.textContent = '₹0.00';
+            if (totalElement) totalElement.textContent = '₹0.00';
+            if (totalItemsElement) totalItemsElement.textContent = '0';
+        } else {
+            // Hide empty cart message and show cart summary
+            if (emptyCart) emptyCart.style.display = 'none';
+            if (cartSummary) cartSummary.style.display = 'block';
+            if (checkoutButton) checkoutButton.disabled = false;
+        }
+        
+        return { success: true, count: cartCount, isEmpty: cartCount === 0 };
     } catch (error) {
         console.error('Error updating cart count:', error);
-        if (cartCountElement) {
-            cartCountElement.textContent = '0';
-            cartCountElement.style.display = 'none';
-        }
+        return { success: false, error: error.message };
     }
 }
 
@@ -500,26 +699,40 @@ function showMessage(message, type = 'info') {
 window.cartFunctions = {
     updateCartCount,
     getCart: async () => {
-        const user = auth.currentUser;
-        if (!user) {
-            return { success: true, cart: JSON.parse(localStorage.getItem('cart') || '[]') };
+        try {
+            const auth = window.firebase?.auth?.() || { currentUser: null };
+            const user = auth.currentUser;
+            if (!user) {
+                return { success: true, cart: JSON.parse(localStorage.getItem('cart') || '[]') };
+            }
+            const result = await window.firebaseFunctions.getCart(user.uid);
+            return result;
+        } catch (error) {
+            console.error('Error getting cart:', error);
+            return { success: false, error: 'Failed to load cart' };
         }
-        return await getCart(user.uid);
     },
     updateCartItem: async (productId, updates) => {
-        const user = auth.currentUser;
-        if (!user) {
-            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-            const itemIndex = cart.findIndex(item => item.id === productId);
+        try {
+            const auth = window.firebase?.auth?.() || { currentUser: null };
+            const user = auth.currentUser;
             
-            if (itemIndex !== -1) {
-                cart[itemIndex] = { ...cart[itemIndex], ...updates };
-                localStorage.setItem('cart', JSON.stringify(cart.filter(item => item.quantity > 0)));
-                updateCartCount();
-                return { success: true };
+            if (!user) {
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const itemIndex = cart.findIndex(item => item.id === productId);
+                
+                if (itemIndex !== -1) {
+                    cart[itemIndex] = { ...cart[itemIndex], ...updates };
+                    localStorage.setItem('cart', JSON.stringify(cart.filter(item => item.quantity > 0)));
+                    await updateCartCount();
+                    return { success: true };
+                }
+                return { success: false, error: 'Product not found in cart' };
             }
-            return { success: false, error: 'Product not found in cart' };
+            return await window.firebaseFunctions.updateCartItem(user.uid, productId, updates);
+        } catch (error) {
+            console.error('Error updating cart item:', error);
+            return { success: false, error: error.message };
         }
-        return await updateCartItem(user.uid, productId, updates);
     }
 };
