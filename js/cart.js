@@ -104,8 +104,9 @@ window.removeFromCart = async (productId) => {
                         }
                     }
                     
-                    // Update the cart count
+                    // Update the cart count and summary
                     await updateCartCount();
+                    updateCartSummary();
                     
                     // Show success message
                     showMessage('Product removed from cart', 'success');
@@ -194,8 +195,9 @@ window.removeFromCart = async (productId) => {
                 }
             }
             
-            // Update the cart count
+            // Update the cart count and summary
             await updateCartCount();
+            updateCartSummary();
             
             showMessage(`${itemToRemove.name || 'Item'} removed from cart`, 'success');
         }
@@ -457,7 +459,9 @@ function getProductDetails(productName) {
     for (const card of productCards) {
         const name = card.querySelector('h3')?.textContent.trim();
         if (name === productName) {
-            const priceText = card.querySelector('.product-card__price')?.textContent || '';
+            let priceText = card.querySelector('.product-card__price')?.textContent || '';
+            // Handle prices with units like '₹1180/20g' by taking the first number
+            priceText = priceText.split('/')[0]; // Take only the part before the slash if it exists
             const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
             const image = card.querySelector('img')?.src || '';
             const category = card.querySelector('.product-card__category')?.textContent || 'Uncategorized';
@@ -553,7 +557,6 @@ async function displayCartItems() {
                 </div>` : ''}
                 <div class="cart-item-details">
                     <h4>${productDetails.name}</h4>
-                    ${price > 0 ? `<p class="price">₹${price.toFixed(2)}</p>` : ''}
                     
                     <p class="item-price">₹${price.toFixed(2)}</p>
                     <button class="remove-item" data-product-id="${productId}">Remove</button>
@@ -572,26 +575,46 @@ async function displayCartItems() {
     // Update the cart container
     cartContainer.innerHTML = itemsHtml.join('');
     
-    // Generate subtotal text
-    let subtotalText = cart.map(item => {
-        const productDetails = getProductDetails(item.name) || item;
-        const price = productDetails.price || 0;
-        return `₹${price.toFixed(2)}`;
-    }).join(' + ');
+    // Update the cart summary
+    updateCartSummary();
     
-    // Update order summary with detailed calculation
-    if (totalItemsElement) totalItemsElement.textContent = totalItems;
-    if (subtotalElement) {
-        subtotalElement.innerHTML = `${subtotalText}<br><span class="subtotal-amount">Subtotal: ₹${subtotal.toFixed(2)}</span>`;
-    }
-    if (shippingElement) {
-        shippingElement.textContent = shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`;
-        const shippingNote = shippingElement.nextElementSibling;
+    // Add event listeners to quantity inputs if any
+    const quantityInputs = document.querySelectorAll('.quantity-input');
+    quantityInputs.forEach(input => {
+        input.addEventListener('change', updateCartSummary);
+    });
+}
+
+// Update cart summary with current items and totals
+function updateCartSummary() {
+    const cartItems = document.querySelectorAll('.cart-item');
+    let subtotal = 0;
+    
+    // Calculate subtotal from visible cart items
+    cartItems.forEach(item => {
+        const priceText = item.querySelector('.item-price')?.textContent || '';
+        const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
+        subtotal += price;
+    });
+    
+    // Calculate shipping (free over 1000)
+    const shipping = subtotal > 1000 ? 0 : 50;
+    const total = subtotal + shipping;
+    
+    // Update the summary elements
+    const subtotalEl = document.querySelector('.subtotal-amount');
+    const shippingEl = document.querySelector('.shipping');
+    const totalEl = document.querySelector('.total-amount');
+    
+    if (subtotalEl) subtotalEl.textContent = `₹${subtotal.toFixed(2)}`;
+    if (shippingEl) {
+        shippingEl.textContent = shipping === 0 ? 'Free' : `₹${shipping.toFixed(2)}`;
+        const shippingNote = shippingEl.nextElementSibling;
         if (shippingNote) {
             shippingNote.textContent = shipping === 0 ? '' : '(Free shipping on orders over ₹1000)';
         }
     }
-    if (totalElement) totalElement.textContent = `₹${total.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `₹${total.toFixed(2)}`;
 }
 
 // Update cart count in the UI and handle empty cart state

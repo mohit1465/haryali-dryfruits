@@ -140,6 +140,16 @@
         width: 16px;
         height: 16px;
     }
+
+    .product-card__wishlist .bi{
+        font-size: 15px;
+        top: 7.5px;
+    }
+    
+    .product-card__wishlist.active .bi {
+        font-size: 15px;
+        top: 7.5px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -152,5 +162,15 @@
     
     .wishlist-tooltip {
         display: none; /* Hide tooltips on mobile */
+    }
+
+    .product-card__wishlist .bi{
+        font-size: 10px;
+        top: 5px;
+    }
+
+    .product-card__wishlist.active .bi {
+        font-size: 10px;
+        top: 5px;
     }
 }
