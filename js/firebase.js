@@ -508,12 +508,25 @@ window.firebaseFunctions.removeFromWishlist = async (userId, productId) => {
 };
 
 // Expose all functions to window.firebaseFunctions
+// Clear the entire cart
+async function clearCart(userId) {
+    try {
+        const cartRef = doc(db, 'carts', userId);
+        await setDoc(cartRef, { items: [] }, { merge: true });
+        return { success: true };
+    } catch (error) {
+        console.error('Error clearing cart:', error);
+        return { success: false, error: error.message };
+    }
+}
+
 const firebaseFunctions = {
     addToCart,
     getCart,
     getCurrentUser: () => auth.currentUser,
     removeFromCart,
     updateCartItem,
+    clearCart,
     // Wishlist functions are already assigned to window.firebaseFunctions
     // in their respective definitions
 };

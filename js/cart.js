@@ -439,7 +439,7 @@ async function addProductToCart(button) {
             // Add the product to cart
             cart.push({
                 ...product,
-                totalPrice: product.price // Set total price same as price since quantity is always 1
+                totalPrice: product.price // Each item is a single unit
             });
             
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -459,10 +459,14 @@ function getProductDetails(productName) {
     for (const card of productCards) {
         const name = card.querySelector('h3')?.textContent.trim();
         if (name === productName) {
-            let priceText = card.querySelector('.product-card__price')?.textContent || '';
-            // Handle prices with units like '₹1180/20g' by taking the first number
-            priceText = priceText.split('/')[0]; // Take only the part before the slash if it exists
-            const price = parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
+            let priceText = card.querySelector('.product-card__price')?.textContent?.trim() || '';
+            // Handle prices with units like '₹1180/20g' by taking the first number before any non-numeric character after the first number
+            const priceMatch = priceText.match(/₹?([0-9,.]+)/);
+            let price = 0;
+            if (priceMatch && priceMatch[1]) {
+                // Remove any commas and convert to number
+                price = parseFloat(priceMatch[1].replace(/,/g, '')) || 0;
+            }
             const image = card.querySelector('img')?.src || '';
             const category = card.querySelector('.product-card__category')?.textContent || 'Uncategorized';
             const id = card.dataset.productId || Date.now().toString();
@@ -544,10 +548,7 @@ async function displayCartItems() {
         // Ensure we're using the ID from the cart item if it exists
         const productId = item.id || productDetails.id;
         const price = productDetails.price;
-        const quantity = item.quantity || 1;
-        const itemTotal = (price * quantity).toFixed(2);
-        
-        subtotal += price * quantity;
+        subtotal += price;
         
         return `
             <div class="cart-item" data-product-id="${productId}">
@@ -578,11 +579,7 @@ async function displayCartItems() {
     // Update the cart summary
     updateCartSummary();
     
-    // Add event listeners to quantity inputs if any
-    const quantityInputs = document.querySelectorAll('.quantity-input');
-    quantityInputs.forEach(input => {
-        input.addEventListener('change', updateCartSummary);
-    });
+    // No quantity inputs to handle
 }
 
 // Update cart summary with current items and totals
@@ -696,48 +693,6 @@ async function updateCartCount() {
         return { success: false, error: error.message };
     }
 }
-
-// Handle checkout
-window.checkout = async () => {
-    const currentUser = window.firebaseAuth?.currentUser;
-    
-    if (!currentUser) {
-        // Redirect to login if not logged in
-        window.location.href = 'login.html?redirect=checkout.html';
-        return;
-    }
-    
-    const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-    if (cart.length === 0) {
-        showMessage('Your cart is empty', 'warning');
-        return;
-    }
-    
-    try {
-        // Sync local cart with Firebase
-        const result = await window.firebaseFunctions.syncCart(currentUser.uid, cart);
-        
-        if (result && result.success) {
-            // Clear local cart after successful sync
-            localStorage.removeItem('cart');
-            await updateCartCount();
-            
-            // Here you would typically process the order
-            // For now, just show success message
-            showMessage('Order placed successfully!', 'success');
-            
-            // Redirect to order confirmation or home page
-            setTimeout(() => {
-                window.location.href = 'index.html#order-confirmation';
-            }, 1500);
-        } else {
-            throw new Error('Failed to sync cart with server');
-        }
-    } catch (error) {
-        console.error('Checkout error:', error);
-        showMessage('Failed to process your order. Please try again.', 'error');
-    }
-};
 
 // Show message to user
 function showMessage(message, type = 'info') {
@@ -895,7 +850,11 @@ function handleWishlistClick(event) {
     // Get product details from the card
     const productCard = wishlistBtn.closest('.product-card');
     const productName = productCard.querySelector('h3')?.textContent || 'Product';
-    const productPrice = productCard.querySelector('.product-card__price')?.textContent || '';
+    const productPriceText = productCard.querySelector('.product-card__price')?.textContent || '0';
+    // Remove currency symbol, units (like /kg), and any non-numeric characters except decimal point
+    const productPrice = typeof productPriceText === 'string' 
+        ? parseFloat(productPriceText.replace(/[^0-9.]/g, '')) || 0 
+        : Number(productPriceText) || 0;
     const productImage = productCard.querySelector('.product-card__image')?.src || '';
     
     const product = {
@@ -1181,7 +1140,6 @@ function createWishlistItemElement(product) {
     item.style.borderRadius = '8px';
     item.style.backgroundColor = '#fff';
     item.style.boxShadow = '0 2px 8px rgba(0,0,0,0.05)';
-    item.style.alignItems = 'center';
     item.style.transition = 'all 0.3s ease';
     item.style.position = 'relative';
     item.style.overflow = 'hidden';
@@ -1197,75 +1155,24 @@ function createWishlistItemElement(product) {
     };
     item.dataset.productId = product.id;
     
-    // Format price
-    const price = parseFloat(product.price) || 0;
-    const discountedPrice = parseFloat(product.discountedPrice) || 0;
-    const displayPrice = discountedPrice > 0 ? discountedPrice : price;
+    let price = 0;
+    if (typeof product.price === 'string') {
+        price = parseFloat(product.price.replace(/[^0-9.]/g, '')) || 0;
+    } else if (typeof product.price === 'number') {
+        price = product.price;
+    }
     
     item.innerHTML = `
-        <div class="cart-item-image" style="position: relative; margin-right: 15px;">
-            <img src="${product.image || 'assets/product-placeholder.jpg'}" 
-                 alt="${product.name}" 
-                 style="width: 80px; height: 80px; object-fit: cover; border-radius: 4px;">
-            <button class="wishlist-remove" 
-                    data-product-id="${product.id}" 
-                    aria-label="Remove from wishlist" 
-                    style="position: absolute; top: -8px; right: -8px; background: white; 
-                           border: 1px solid #ddd; border-radius: 50%; width: 24px; 
-                           height: 24px; display: flex; align-items: center; 
-                           justify-content: center; cursor: pointer; color: #ff6b6b; 
-                           box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-                           transition: all 0.2s ease;">
-                <i class="bi bi-x" style="font-size: 14px;"></i>
-            </button>
-            <style>
-                .wishlist-remove:hover {
-                    background: #ff6b6b !important;
-                    color: white !important;
-                    transform: scale(1.1);
-                }
-            </style>
-        </div>
-        <div class="cart-item-details" style="flex: 1;">
-            <div style="margin-bottom: 8px;">
-                <h4 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 500; color: #333;">
-                    ${product.name}
-                </h4>
-                <div style="margin-top: 5px;">
-                    ${discountedPrice > 0 ? `
-                        <span style="text-decoration: line-through; color: #999; margin-right: 8px; font-size: 13px;">
-                            ₹${price.toFixed(2)}
-                        </span>
-                        <span style="color: #d32f2f; font-weight: 600; font-size: 15px;">
-                            ₹${discountedPrice.toFixed(2)}
-                        </span>` : 
-                        `<span style="color: #333; font-weight: 600; font-size: 15px;">
-                            ₹${price.toFixed(2)}
-                        </span>`
-                    }
-                </div>
+            ${product.image ? `
+            <div class="cart-item-image">
+                <img src="${product.image}" alt="${product.name}">
+            </div>` : ''}
+            <div class="cart-item-details">
+                <h4>${product.name}</h4>
+                
+                <p class="item-price">₹${price.toFixed(2)}</p>
+                <button class="remove-item wishlist-remove" data-product-id="${product.id}">Remove</button>
             </div>
-            <div style="display: flex; gap: 8px; margin-top: 10px;">
-                <button class="add-to-cart" 
-                        data-product-id="${product.id}"
-                        style="flex: 1; background: #4CAF50; color: white; border: none; 
-                               padding: 6px 10px; border-radius: 4px; cursor: pointer; 
-                               font-size: 13px; transition: background 0.2s; display: flex; 
-                               align-items: center; justify-content: center;">
-                    <i class="fas fa-shopping-cart" style="margin-right: 5px; font-size: 12px;"></i> 
-                    Add to Cart
-                </button>
-                <button class="move-to-cart" 
-                        data-product-id="${product.id}"
-                        style="background: white; color: #555; border: 1px solid #ddd; 
-                               padding: 6px 10px; border-radius: 4px; cursor: pointer; 
-                               font-size: 13px; transition: all 0.2s; display: flex;
-                               align-items: center; justify-content: center;">
-                    <i class="fas fa-arrow-right" style="margin-right: 5px; font-size: 12px;"></i>
-                    Move
-                </button>
-            </div>
-        </div>
     `;
     
     // Add event listeners
@@ -1675,3 +1582,400 @@ async function showTab(tabId) {
 // Listen for hash changes to update the view
 window.addEventListener('hashchange', initPage);
 
+
+
+// Checkout functionality
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle checkout button click
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-checkout')) {
+            e.preventDefault();
+            handleCheckout();
+        }
+        
+        // Close checkout modal
+        if (e.target.classList.contains('close-checkout') || e.target === document.getElementById('checkoutOverlay')) {
+            document.getElementById('checkoutOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
+    // Handle form submission
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await submitOrder();
+        });
+    }
+});
+
+function showCheckoutModal(cartItems, user, totalAmount) {
+    // Create modal container
+    const modal = document.createElement('div');
+    modal.className = 'checkout-modal';
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+    `;
+
+    // Create modal content
+    const modalContent = document.createElement('div');
+    modalContent.className = 'checkout-content';
+    modalContent.style.cssText = `
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+    `;
+
+    // Close button
+    const closeBtn = document.createElement('button');
+    closeBtn.innerHTML = '&times;';
+    closeBtn.style.cssText = `
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        background: none;
+        border: none;
+        font-size: 28px;
+        cursor: pointer;
+        color: #666;
+    `;
+    closeBtn.onclick = () => document.body.removeChild(modal);
+
+    // Create form
+    const form = document.createElement('form');
+    form.action = 'https://formsubmit.co/mohit8307521465@gmail.com';
+    form.method = 'POST';
+    form.style.display = 'flex';
+    form.style.flexDirection = 'column';
+    form.style.gap = '15px';
+
+    // Add hidden inputs for order details
+    const orderDetails = {
+        Name: user.displayName || '',
+        Email: user.email || '',
+        Phone: user.phoneNumber || '',
+        Items: JSON.stringify(cartItems.map(item => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity
+        }))),
+        'Total Amount': totalAmount.toFixed(2)
+    };
+
+    // Add hidden fields
+    Object.entries(orderDetails).forEach(([key, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
+    });
+
+    // Add address fields
+    const addressFields = ['Full Address', 'City', 'State', 'PIN Code'];
+    addressFields.forEach(field => {
+        const div = document.createElement('div');
+        div.style.display = 'flex';
+        div.style.flexDirection = 'column';
+        div.style.marginBottom = '15px';
+        
+        const label = document.createElement('label');
+        label.textContent = field;
+        label.style.marginBottom = '5px';
+        label.style.fontWeight = '500';
+        
+        const input = document.createElement('input');
+        input.type = field === 'PIN Code' ? 'number' : 'text';
+        input.required = true;
+        input.name = field;
+        input.style.padding = '10px';
+        input.style.border = '1px solid #ddd';
+        input.style.borderRadius = '4px';
+        input.style.fontSize = '16px';
+        
+        div.appendChild(label);
+        div.appendChild(input);
+        form.appendChild(div);
+    });
+
+    // Add order summary
+    const orderSummary = document.createElement('div');
+    orderSummary.style.margin = '20px 0';
+    orderSummary.innerHTML = `
+        <h3 style="margin-bottom: 15px; text-align: center;">Order Summary</h3>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+            <div style="margin-bottom: 15px;">
+                <h4 style="margin: 0 0 10px 0;">Items (${cartItems.length}):</h4>
+                ${cartItems.map(item => {
+                    const itemPrice = typeof item.price === 'string' ? 
+                        parseFloat(item.price.replace(/[^0-9.]/g, '')) || 0 : 
+                        (item.price || 0);
+                    const quantity = parseInt(item.quantity) || 1;
+                    const itemTotal = (itemPrice * quantity).toFixed(2);
+                    return `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 0.9em;">
+                            <span>${item.name || 'Item'} x${quantity}</span>
+                            <span>₹${itemTotal}</span>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+            <div style="border-top: 1px solid #ddd; margin: 15px 0; padding-top: 10px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Subtotal:</span>
+                    <span>₹${totalAmount.toFixed(2)}</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span>Shipping:</span>
+                    <span>Free</span>
+                </div>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.1em; border-top: 1px solid #ddd; padding-top: 10px; margin-top: 10px;">
+                <span>Total:</span>
+                <span>₹${totalAmount.toFixed(2)}</span>
+            </div>
+        </div>
+    `;
+    form.appendChild(orderSummary);
+
+    // Add UPI payment section
+    const upiSection = document.createElement('div');
+    upiSection.style.margin = '20px 0';
+    upiSection.innerHTML = `
+        <h3 style="margin-bottom: 15px; text-align: center;">Payment Method</h3>
+        <div style="text-align: center; margin-bottom: 20px;">
+            <p>Scan the QR code below to complete your payment</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=UPI:9671121643@ybl" 
+                 alt="UPI QR Code" 
+                 style="max-width: 200px; margin: 15px auto; display: block;">
+            <p style="font-weight: bold; margin: 10px 0;">UPI ID: 9671121643@ybl</p>
+            <p style="color: #666; font-size: 14px;">Please send the payment and click "Place Order". Your payment will be verified within 24 hours.</p>
+        </div>
+    `;
+    form.appendChild(upiSection);
+
+    // Add submit button
+    const submitBtn = document.createElement('button');
+    submitBtn.type = 'submit';
+    submitBtn.textContent = 'Place Order';
+    submitBtn.style.cssText = `
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: bold;
+        margin-top: 15px;
+        transition: background-color 0.3s;
+    `;
+    submitBtn.onmouseover = () => submitBtn.style.backgroundColor = '#45a049';
+    submitBtn.onmouseout = () => submitBtn.style.backgroundColor = '#4CAF50';
+
+    // Add form submission handler
+    form.onsubmit = (e) => {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Processing...';
+        // The form will be submitted to formsubmit.co
+        // User will be redirected back to the site after submission
+    };
+
+    // Assemble modal
+    modalContent.appendChild(closeBtn);
+    modalContent.appendChild(document.createElement('h2')).textContent = 'Complete Your Order';
+    modalContent.appendChild(form);
+    form.appendChild(submitBtn);
+    modal.appendChild(modalContent);
+    
+    // Close modal when clicking outside
+    modal.onclick = (e) => {
+        if (e.target === modal) {
+            document.body.removeChild(modal);
+        }
+    };
+
+    // Add to document
+    document.body.appendChild(modal);
+}
+
+// Checkout functionality
+document.addEventListener('DOMContentLoaded', () => {
+    // Handle checkout button click
+    document.addEventListener('click', (e) => {
+        if (e.target.closest('.btn-checkout')) {
+            e.preventDefault();
+            handleCheckout();
+        }
+        
+        // Close checkout modal
+        if (e.target.classList.contains('close-checkout') || e.target === document.getElementById('checkoutOverlay')) {
+            document.getElementById('checkoutOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+    });
+    
+    // Handle form submission
+    const checkoutForm = document.getElementById('checkoutForm');
+    if (checkoutForm) {
+        checkoutForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await submitOrder();
+        });
+    }
+});
+
+async function handleCheckout() {
+    try {
+        // Check if user is logged in
+        const user = window.firebaseAuth?.currentUser;
+        if (!user) {
+            showMessage('Please log in to proceed to checkout', 'error');
+            // Optionally redirect to login
+            window.location.hash = 'login';
+            return;
+        }
+
+        // Get cart items
+        const cartResult = await window.firebaseFunctions.getCart(user.uid);
+        if (!cartResult?.success || !cartResult.cart?.length) {
+            showMessage('Your cart is empty', 'error');
+            return;
+        }
+
+        // Show checkout modal
+        document.getElementById('checkoutOverlay').style.display = 'block';
+        document.body.style.overflow = 'hidden';
+        
+        // Pre-fill user data if available
+        if (user.email) {
+            const emailInput = document.getElementById('email');
+            if (emailInput && !emailInput.value) {
+                emailInput.value = user.email;
+            }
+        }
+        
+    } catch (error) {
+        console.error('Checkout error:', error);
+        showMessage('An error occurred during checkout. Please try again.', 'error');
+    }
+}
+
+async function submitOrder() {
+    const form = document.getElementById('checkoutForm');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    
+    try {
+        // Show loading state
+        form.classList.add('loading');
+        submitBtn.disabled = true;
+        
+        // Get form data
+        const formData = new FormData(form);
+        const orderData = Object.fromEntries(formData.entries());
+        
+        // Add timestamp and user ID
+        const user = window.firebaseAuth?.currentUser;
+        if (user) {
+            orderData.userId = user.uid;
+            orderData.timestamp = new Date().toISOString();
+        }
+        
+        // Helper function to get product price by ID from the page
+        const getProductPrice = (productId) => {
+            const productElement = document.querySelector(`[data-product-id="${productId}"]`);
+            if (productElement) {
+                const priceElement = productElement.querySelector('.product-card__price');
+                if (priceElement) {
+                    const priceText = priceElement.textContent.trim();
+                    return parseFloat(priceText.replace(/[^0-9.]/g, '')) || 0;
+                }
+            }
+            return 0;
+        };
+
+        // Get cart items and calculate total from actual product prices
+        const cartResult = await window.firebaseFunctions.getCart(user.uid);
+        if (cartResult?.success && cartResult.cart?.length) {
+            // Process each item in cart
+            const uniqueItems = new Map(); // To store unique items by name
+            let total = 0;
+            
+            for (const item of cartResult.cart) {
+                const price = getProductPrice(item.id || item.name.toLowerCase());
+                // Only keep the latest price for each unique item
+                uniqueItems.set(item.name, price);
+                total += price;
+            }
+            
+            // Convert unique items to formatted string
+            orderData.items = Array.from(uniqueItems.entries())
+                .map(([name, price]) => `${name} - ₹${price.toFixed(2)}`)
+                .join('\n');
+                
+            orderData.total = total.toFixed(2);
+            console.log('Calculated total from product prices:', orderData.total);
+        }
+        
+        // Submit the form
+        const response = await fetch(form.action, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+        
+        if (response.ok) {
+            // Clear the cart on successful order
+            if (user) {
+                await window.firebaseFunctions.clearCart(user.uid);
+            }
+            
+            // Show success message
+            showMessage('Order placed successfully! We will contact you soon.', 'success');
+            
+            // Close the modal and update UI
+            document.getElementById('checkoutOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            
+            // Update cart count
+            updateCartCount();
+            
+            // Redirect to home or orders page
+            setTimeout(() => {
+                window.location.href = 'index.html#home';
+            }, 2000);
+        } else {
+            throw new Error('Failed to submit order');
+        }
+    } catch (error) {
+        console.error('Order submission error:', error);
+        showMessage('Failed to place order. Please try again.', 'error');
+    } finally {
+        // Reset form state
+        form.classList.remove('loading');
+        submitBtn.disabled = false;
+    }
+}
+
+// Make sure to include this script after firebase.js and cart.js in your HTML
