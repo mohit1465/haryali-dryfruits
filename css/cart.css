@@ -618,7 +618,7 @@
     cursor: pointer;
     font-weight: 600;
     margin-top: 10px;
-    transition: background-color 0.3s ease;
+    transition: all 0.3s ease;
 }
 
 .product-card__add-to-cart:hover {
