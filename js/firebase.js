@@ -33,7 +33,6 @@ import {
 
 // Firebase configuration - Update these values in your Firebase Console
 const firebaseConfig = {
-  apiKey: "AIzaSyA7-fn82VhwL87iIRVKncqUeRR4EGIGjMw",
   authDomain: "haryali-ef198.firebaseapp.com",
   projectId: "haryali-ef198",
   storageBucket: "haryali-ef198.appspot.com",
